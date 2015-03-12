@@ -14,15 +14,15 @@ namespace myun2
 	{
 #ifdef WIN32
 		typedef SOCKET socket_type;
-		static const int invalid_socket = INVALID_SOCKET;
+		static const socket_type invalid_socket = INVALID_SOCKET;
 #else
 		typedef int socket_type;
-		static const int invalid_socket = -1;
+		static const socket_type invalid_socket = -1;
 #endif
 		class listener
 		{
-			socket_type listen_socket;
 		private:
+			socket_type listen_socket;
 			struct sockaddr_in port_to_sockaddr(unsigned short port)
 			{
 				struct sockaddr_in addr;
@@ -35,14 +35,19 @@ namespace myun2
 			class socket_bind_failed {};
 			class socket_listen_failed {};
 			class socket_accept_failed {};
+			typedef int (*listener_callback_type)(struct sockaddr_in addr, socket_type s);
 
-			listener(unsigned short port, int max_connect)
+			listener(unsigned short port, int max_connect, listener_callback_type callback)
 			{
 				if ( (listen_socket = socket(AF_INET, SOCK_STREAM, 0)) == invalid_socket )
 					throw socket_create_failed();
 
-				struct sockaddr_in addr = port_to_sockaddr(port);
-				if ( bind(listen_socket, (struct sockaddr *)&addr, sizeof(addr)) )
+				struct sockaddr_in binding_addr;
+				binding_addr.sin_family = AF_INET;
+				binding_addr.sin_port = htons(port);
+				binding_addr.sin_addr.S_un.S_addr = INADDR_ANY;
+
+				if ( bind(listen_socket, (struct sockaddr *)&binding_addr, sizeof(binding_addr)) )
 					throw socket_bind_failed();
 
 				if ( listen(listen_socket, max_connect) )
@@ -52,11 +57,13 @@ namespace myun2
 				{
 					struct sockaddr_in client;
 					int len = sizeof(client);
-					if ( (socket_type sock = accept(listen_socket, (struct sockaddr *)&client, &len)) == invalid_socket )
+					socket_type accepted_socket;
+					if ( (accepted_socket = accept(listen_socket, (struct sockaddr *)&client, &len)) == invalid_socket )
 						throw socket_accept_failed();
+					callback(client, accepted_socket);
 				}
 			}
-		}
+		};
 	}
 }
 
