@@ -5,7 +5,9 @@
 	#include <winsock2.h>
 	#include "myun2/responder/win32/wsa_cleaner.hpp"
 #else
+	#include <sys/types.h>
 	#include <sys/socket.h>
+	#include <netinet/in.h>
 #endif
 
 namespace myun2
@@ -28,7 +30,12 @@ namespace myun2
 				struct sockaddr_in addr;
 				addr.sin_family = AF_INET;
 				addr.sin_port = htons(port);
+#ifdef WIN32
 				addr.sin_addr.S_un.S_addr = INADDR_ANY;
+#else
+				addr.sin_addr.s_addr = INADDR_ANY;
+#endif
+				return addr;
 			}
 		public:
 			class socket_create_failed {};
@@ -42,10 +49,7 @@ namespace myun2
 				if ( (listen_socket = socket(AF_INET, SOCK_STREAM, 0)) == invalid_socket )
 					throw socket_create_failed();
 
-				struct sockaddr_in binding_addr;
-				binding_addr.sin_family = AF_INET;
-				binding_addr.sin_port = htons(port);
-				binding_addr.sin_addr.S_un.S_addr = INADDR_ANY;
+				struct sockaddr_in binding_addr = port_to_sockaddr(port);
 
 				if ( bind(listen_socket, (struct sockaddr *)&binding_addr, sizeof(binding_addr)) )
 					throw socket_bind_failed();
@@ -56,7 +60,7 @@ namespace myun2
 				while (1)
 				{
 					struct sockaddr_in client;
-					int len = sizeof(client);
+					socklen_t len = sizeof(client);
 					socket_type accepted_socket;
 					if ( (accepted_socket = accept(listen_socket, (struct sockaddr *)&client, &len)) == invalid_socket )
 						throw socket_accept_failed();
