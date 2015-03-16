@@ -66,6 +66,15 @@ namespace myun2
 						throw socket_accept_failed();
 					callback(client, accepted_socket);
 				}
+				close(listen_socket);
+			}
+
+			void close(socket_type s) const {
+#ifdef WIN32
+				closesocket(s);
+#else
+				close(s);
+#endif
 			}
 		};
 	}
