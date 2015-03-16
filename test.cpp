@@ -7,14 +7,25 @@
 
 using namespace myun2::responder;
 
-int accepted(struct sockaddr_in addr, socket_type s)
+int accepted(struct sockaddr_in addr, socket_type sock)
 {
 	printf("accepted!!\n");
+	FILE *fp;
+	fp = fdopen(sock, "r");
+
+	char buffer[1024];
+	while(1)
+	{
+		if ( !fgets(buffer, sizeof(buffer), fp) ) break;
+		puts(buffer);
+	}
+
 	return 0;
 }
 
 int main()
 {
+	printf("Starting service in listen 8000 port.\n");
 	try {
 #ifdef WIN32
 		wsa_cleaner _wsa_cleaner;
