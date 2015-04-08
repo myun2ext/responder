@@ -16,6 +16,7 @@ namespace myun2
 			static int close(sock_type s) { return close(s); }
 			static bool valid_socket(sock_type s) { return s != -1; }
 		};
+		typedef linux_socket_desc socket_desc;
 	}
 }
 

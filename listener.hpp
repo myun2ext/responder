@@ -3,10 +3,8 @@
 
 #ifdef WIN32
 	#include "myun2/responder/win32/socket.hpp"
-	typedef windows_socket_desc socket_desc;
 #else
 	#include "myun2/responder/linux/socket.hpp"
-	typedef linux_socket_desc socket_desc;
 #endif
 
 namespace myun2
@@ -16,7 +14,7 @@ namespace myun2
 		class listener
 		{
 		private:
-			typedef typename socket_desc::sock_type socket_type;
+			typedef socket_desc::sock_type socket_type;
 			socket_type listen_socket;
 
 			struct sockaddr_in port_to_sockaddr(unsigned short port)

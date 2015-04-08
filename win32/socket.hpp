@@ -14,6 +14,7 @@ namespace myun2
 			static int close(sock_type s) { return closesocket(s); }
 			static bool valid_socket(sock_type s) { return s != INVALID_SOCKET; }
 		};
+		typedef windows_socket_desc socket_desc;
 	}
 }
 

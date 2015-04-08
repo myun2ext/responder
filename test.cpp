@@ -6,6 +6,7 @@
 #endif
 
 using namespace myun2::responder;
+typedef socket_desc::sock_type socket_type;
 
 int accepted(struct sockaddr_in addr, socket_type sock)
 {
