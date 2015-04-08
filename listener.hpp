@@ -2,29 +2,23 @@
 #define __MYUN2__RESPONDER__LISTENER__HPP__
 
 #ifdef WIN32
-	#include <winsock2.h>
-	#include "myun2/responder/win32/wsa_cleaner.hpp"
+	#include "myun2/responder/win32/socket.hpp"
+	typedef windows_socket_desc socket_desc;
 #else
-	#include <sys/types.h>
-	#include <sys/socket.h>
-	#include <netinet/in.h>
+	#include "myun2/responder/linux/socket.hpp"
+	typedef linux_socket_desc socket_desc;
 #endif
 
 namespace myun2
 {
 	namespace responder
 	{
-#ifdef WIN32
-		typedef SOCKET socket_type;
-		static const socket_type invalid_socket = INVALID_SOCKET;
-#else
-		typedef int socket_type;
-		static const socket_type invalid_socket = -1;
-#endif
 		class listener
 		{
 		private:
+			typedef typename socket_desc::sock_type socket_type;
 			socket_type listen_socket;
+
 			struct sockaddr_in port_to_sockaddr(unsigned short port)
 			{
 				struct sockaddr_in addr;
@@ -46,7 +40,7 @@ namespace myun2
 
 			listener(unsigned short port, int max_connect, listener_callback_type callback)
 			{
-				if ( (listen_socket = socket(AF_INET, SOCK_STREAM, 0)) == invalid_socket )
+				if ( !valid_socket(listen_socket = socket(AF_INET, SOCK_STREAM, 0)) )
 					throw socket_create_failed();
 
 				struct sockaddr_in binding_addr = port_to_sockaddr(port);
@@ -62,20 +56,17 @@ namespace myun2
 					struct sockaddr_in client;
 					socklen_t len = sizeof(client);
 					socket_type accepted_socket;
-					if ( (accepted_socket = accept(listen_socket, (struct sockaddr *)&client, &len)) == invalid_socket )
+					if ( !valid_socket(accepted_socket = accept(listen_socket, (struct sockaddr *)&client, &len)) )
 						throw socket_accept_failed();
 					callback(client, accepted_socket);
 				}
 				close(listen_socket);
 			}
 
-			void close(socket_type s) const {
-#ifdef WIN32
-				closesocket(s);
-#else
-				close(s);
-#endif
-			}
+			int close(socket_type s) const {
+				return socket_desc::close(s); }
+			bool valid_socket(socket_type s) const {
+				return socket_desc::valid_socket(s); }
 		};
 	}
 }
