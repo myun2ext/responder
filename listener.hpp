@@ -52,7 +52,11 @@ namespace myun2
 				while (1)
 				{
 					struct sockaddr_in client;
+#ifdef WIN32
+					int len = sizeof(client);
+#else
 					socklen_t len = sizeof(client);
+#endif
 					socket_type accepted_socket;
 					if ( !valid_socket(accepted_socket = accept(listen_socket, (struct sockaddr *)&client, &len)) )
 						throw socket_accept_failed();
