@@ -1,5 +1,5 @@
-#ifndef __MYUN2__RESPONDER__HTTP__HPP__
-#define __MYUN2__RESPONDER__HTTP__HPP__
+#ifndef __MYUN2__RESPONDER__HTTP__REQUEST__HPP__
+#define __MYUN2__RESPONDER__HTTP__REQUEST__HPP__
 
 #include <string>
 
@@ -18,4 +18,4 @@ namespace myun2
 	}
 }
 
-#endif//__MYUN2__RESPONDER__HTTP__HPP__
+#endif//__MYUN2__RESPONDER__HTTP__REQUEST__HPP__
