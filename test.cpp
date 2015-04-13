@@ -28,7 +28,7 @@ int accepted(struct sockaddr_in addr, socket_type sock)
 	while(1)
 	{
 		if ( !fgets(buffer, sizeof(buffer), fp) ) break;
-		puts(buffer);
+		fputs(buffer, stdout);
 	}
 
 	return 0;
