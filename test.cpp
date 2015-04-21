@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "myun2/responder/listener.hpp"
+#include "myun2/responder/http/request.hpp"
 
 #ifndef WIN32
 	#include <errno.h>
@@ -15,6 +16,11 @@ int accepted(struct sockaddr_in addr, socket_type sock)
 	fp = fdopen(sock, "r");
 
 	char buffer[1024];
+	if ( !fgets(buffer, sizeof(buffer), fp) ) return -1;
+
+	http_request hr = parse_http_request(buffer);
+	printf("%s - %s - %s\n", hr.method.c_str(), hr.path.c_str(), hr.protocol.c_str());
+
 	while(1)
 	{
 		if ( !fgets(buffer, sizeof(buffer), fp) ) break;
