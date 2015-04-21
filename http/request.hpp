@@ -23,15 +23,18 @@ namespace myun2
 			{
 				if ( *p == ' ' ){
 					if ( hr.method.empty() )
-						method = ::std::string(prev_ptr, p - prev_ptr);
-					if ( hr.path.empty() )
-						path = ::std::string(prev_ptr, p - prev_ptr);
-					if ( hr.protocol.empty() )
-						protocol = ::std::string(prev_ptr, p - prev_ptr);
+						hr.method = ::std::string(prev_ptr, p - prev_ptr);
+					else if ( hr.path.empty() )
+						hr.path = ::std::string(prev_ptr, p - prev_ptr);
+					else if ( hr.protocol.empty() )
+						hr.protocol = ::std::string(prev_ptr, p - prev_ptr);
 					prev_ptr = p+1;
 				}
 				p++;
 			}
+			if ( hr.protocol.empty() )
+				hr.protocol = ::std::string(prev_ptr, p - prev_ptr);
+			return hr;
 		}
 	}
 }

@@ -27,13 +27,13 @@ int accepted(struct sockaddr_in addr, socket_type sock)
 
 	char buffer[1024];
 	if ( !fgets(buffer, sizeof(buffer), fp) ) return -1;
+	//printf("\"%s\"", buffer);
 
 	http_request hr = parse_http_request(buffer);
-	printf("%s - %s - %s\n", hr.method.c_str(), hr.path.c_str(), hr.protocol.c_str());
+	printf("%s - %s (%s)\n", hr.method.c_str(), hr.path.c_str(), hr.protocol.c_str());
 
-	while(1)
+	while(fgets(buffer, sizeof(buffer), fp))
 	{
-		if ( !fgets(buffer, sizeof(buffer), fp) ) break;
 		fputs(buffer, stdout);
 	}
 
