@@ -1,5 +1,5 @@
-#ifndef __MYUN2__RESPONDER__LISTENER__HPP__
-#define __MYUN2__RESPONDER__LISTENER__HPP__
+#ifndef __MYUN2__RESPONDER__SOCKET__HPP__
+#define __MYUN2__RESPONDER__SOCKET__HPP__
 
 #ifdef WIN32
 	#include "myun2/responder/win32/socket.hpp"
@@ -11,7 +11,7 @@ namespace myun2
 {
 	namespace responder
 	{
-		class listener
+		class Socket
 		{
 		private:
 			typedef socket_desc::sock_type socket_type;
@@ -73,4 +73,4 @@ namespace myun2
 	}
 }
 
-#endif//__MYUN2__RESPONDER__LISTENER__HPP__
+#endif//__MYUN2__RESPONDER__SOCKET__HPP__
