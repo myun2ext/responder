@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "myun2/responder/listener.hpp"
 #include "myun2/responder/http/request.hpp"
 
@@ -31,6 +32,13 @@ int accepted(struct sockaddr_in addr, socket_type sock)
 
 	http_request hr = parse_http_request(buffer);
 	printf("%s - %s (%s)\n", hr.method.c_str(), hr.path.c_str(), hr.protocol.c_str());
+	const char* send_buf =
+		"HTTP/1.0 200 OK\r\n"
+		"Content-Length: 8\r\n"
+		"Content-Type: text/html\r\n"
+	 	"\r\n"
+		"hello\r\n\r\n";
+	send(sock, send_buf, strlen(send_buf), 0);
 
 	while(fgets(buffer, sizeof(buffer), fp))
 	{
